@@ -23,13 +23,16 @@ const ProductScreen = ({ history, match }) => {
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, product, error } = productDetails;
 
+  // Had to define id constant in order the history.push to work
+  const id = match.params.id;
+
   useEffect(() => {
     dispatch(listProductDetails(match.params.id));
   }, [dispatch, match]);
 
-  // const addToCartHandler = () => {
-  //   history.push(`/cart/${match.param.id}?qty=${qty}`);
-  // };
+  const addToCartHandler = () => {
+    history.push(`/cart/${id}?qty=${qty}`);
+  };
 
   return (
     <>
@@ -105,15 +108,14 @@ const ProductScreen = ({ history, match }) => {
                 )}
                 <ListGroup.Item>
                   <div className="d-grid gap-2">
-                    <Link to={`/cart/${match.params.id}?qty=${qty}`}>
-                      <Button
-                        className="btn-block"
-                        type="button"
-                        disabled={product.countInStock === 0}
-                      >
-                        Add To Cart
-                      </Button>
-                    </Link>
+                    <Button
+                      onClick={addToCartHandler}
+                      className="btn-block"
+                      type="button"
+                      disabled={product.countInStock === 0}
+                    >
+                      Add To Cart
+                    </Button>
                   </div>
                 </ListGroup.Item>
               </ListGroup>
