@@ -12,6 +12,7 @@ connectDB();
 
 const app = express();
 
+// A middleware in order to parse the req.body in userController.js & it is called body parser
 app.use(express.json());
 
 app.get("/", (req, res) => {

@@ -27,6 +27,9 @@ const userSchema = mongoose.Schema(
   }
 );
 
+// A method to compare the entered plain password with the one saved in the database which is encrypted
+// This method can be accessed through stantiated user
+// When we call matchPassword method on specific user we get the encrypted password for that user through this.password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
