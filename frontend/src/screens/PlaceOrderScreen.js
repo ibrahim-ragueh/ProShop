@@ -1,37 +1,43 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
 
 const PlaceOrderScreen = () => {
   const cart = useSelector((state) => state.cart);
 
-  //Calculate Prices
-  const addDecimals = (num) => {
-    return (Math.round(num * 100) / 100).toFixed(2);
-  };
-
-  cart.itemsPrice = addDecimals(
-    cart.cartItems.reduce((acc, item) => acc + item.qty * item.price, 0)
+  //Calculate items prices in the cart
+  const itemsPrice = cart.cartItems.reduce(
+    (acc, item) => acc + item.qty * item.price,
+    0
   );
 
-  cart.shippingPrice = addDecimals(
-    cart.itemsPrice > 200
-      ? 0
-      : cart.itemsPrice < 200 && cart.itemsPrice > 100
-      ? 50
-      : 75
-  );
+  // Calculate the shipping price
+  const shippingPrice =
+    itemsPrice > 200 ? 0 : itemsPrice < 200 && itemsPrice > 100 ? 50 : 75;
 
-  cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)));
+  // Calculate the tax price
+  const taxPrice = 0.15 * itemsPrice;
 
-  cart.totalPrice = (
-    Number(cart.itemsPrice) +
-    Number(cart.shippingPrice) +
-    Number(cart.taxPrice)
-  ).toFixed(2);
+  // Calculate the total price
+  const totalPrice = itemsPrice + shippingPrice + taxPrice;
+
+  // Defining a new formatter to format the calculated prices
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+
+  cart.itemsPrice = formatter.format(itemsPrice);
+
+  cart.shippingPrice = formatter.format(shippingPrice);
+
+  cart.taxPrice = formatter.format(taxPrice);
+
+  cart.totalPrice = formatter.format(totalPrice);
 
   const placeOrderHandler = () => {
     console.log("Place Order");
@@ -102,28 +108,28 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${cart.itemsPrice}</Col>
+                  <Col>{cart.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${cart.shippingPrice}</Col>
+                  <Col>{cart.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>${cart.taxPrice}</Col>
+                  <Col>{cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${cart.totalPrice}</Col>
+                  <Col>{cart.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
