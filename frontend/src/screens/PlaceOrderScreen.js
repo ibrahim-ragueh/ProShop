@@ -1,46 +1,72 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
+import { createOrder } from "../actions/orderActions";
 
-const PlaceOrderScreen = () => {
+const PlaceOrderScreen = ({ history }) => {
+  const dispatch = useDispatch();
+
   const cart = useSelector((state) => state.cart);
 
-  //Calculate items prices in the cart
-  const itemsPrice = cart.cartItems.reduce(
-    (acc, item) => acc + item.qty * item.price,
-    0
+  // A method to add decimals in our calculated prices
+  const addDecimals = (num) => {
+    return (Math.round(num * 100) / 100).toFixed(2);
+  };
+
+  // Calculate items prices in the cart
+  cart.itemsPrice = addDecimals(
+    cart.cartItems.reduce((acc, item) => acc + item.qty * item.price, 0)
   );
 
   // Calculate the shipping price
-  const shippingPrice =
-    itemsPrice > 200 ? 0 : itemsPrice < 200 && itemsPrice > 100 ? 50 : 75;
+  cart.shippingPrice = addDecimals(
+    cart.itemsPrice > 200
+      ? 0
+      : cart.itemsPrice < 200 && cart.itemsPrice > 100
+      ? 50
+      : 75
+  );
 
   // Calculate the tax price
-  const taxPrice = 0.15 * itemsPrice;
+  cart.taxPrice = addDecimals(Number(0.15 * cart.itemsPrice));
 
   // Calculate the total price
-  const totalPrice = itemsPrice + shippingPrice + taxPrice;
+  cart.totalPrice = (
+    Number(cart.itemsPrice) +
+    Number(cart.shippingPrice) +
+    Number(cart.taxPrice)
+  ).toFixed(2);
 
-  // Defining a new formatter to format the calculated prices
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+  // We need to bring the order create state because when we dispatch createOrder it is going to send
+  // everything down through the state and we need to grab that
+  const orderCreate = useSelector((state) => state.orderCreate);
+  const { order, success, error } = orderCreate;
 
-  cart.itemsPrice = formatter.format(itemsPrice);
-
-  cart.shippingPrice = formatter.format(shippingPrice);
-
-  cart.taxPrice = formatter.format(taxPrice);
-
-  cart.totalPrice = formatter.format(totalPrice);
+  // Redirect in case of place order was succeesful
+  useEffect(() => {
+    if (success) {
+      history.push(`/order/${order._id}`);
+    } else {
+      console.error(error);
+    }
+    // eslint-disable-next-line
+  }, [history, success]);
 
   const placeOrderHandler = () => {
-    console.log("Place Order");
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      })
+    );
   };
 
   return (
@@ -108,29 +134,33 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>{cart.itemsPrice}</Col>
+                  <Col>${cart.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>{cart.shippingPrice}</Col>
+                  <Col>${cart.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>{cart.taxPrice}</Col>
+                  <Col>${cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>{cart.totalPrice}</Col>
+                  <Col>${cart.totalPrice}</Col>
                 </Row>
+              </ListGroup.Item>
+
+              <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
 
               <ListGroup.Item className="d-grid gap-2">

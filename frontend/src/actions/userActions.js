@@ -48,7 +48,7 @@ export const login = (email, password) => async (dispatch) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.response,
+          : error.message,
     });
   }
 };
@@ -93,7 +93,7 @@ export const register = (name, email, password) => async (dispatch) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.response,
+          : error.message,
     });
   }
 };
@@ -127,7 +127,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.response,
+          : error.message,
     });
   }
 };
@@ -161,7 +161,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
-          : error.response,
+          : error.message,
     });
   }
 };
