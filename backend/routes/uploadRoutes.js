@@ -9,7 +9,7 @@ const router = express.Router();
 // An object with 2 functions is passed in: destination & filename
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    // A callback function where null as for no error & where we want to upload
+    // A callback function with null for no error & where we want to upload
     cb(null, "uploads/");
   },
   filename(req, file, cb) {
@@ -54,7 +54,7 @@ const upload = multer({
 
 // The endpoint
 // Only "/" is used because uploadRoutes.js file is connected to api/uploads
-// upload middleware is used with single image is uploaded & called image
+// upload middleware is used with a single image to be uploaded & called image
 router.post("/", upload.single("image"), (req, res) => {
   // path is sent back from this route
   res.send(`/${req.file.path}`);
