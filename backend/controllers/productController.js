@@ -6,7 +6,18 @@ import Product from "../models/productModel.js";
 // @access  Public
 
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  // query to get query strings (if there is ?= or ?something=)
+  const keyword = req.query.keyword
+    ? {
+        // We want to match the keyword to the name of the product
+        name: {
+          $regex: req.query.keyword,
+          $options: "i", // The "i" indicates case insensitive
+        },
+      }
+    : {};
+
+  const products = await Product.find({ ...keyword });
   res.json(products);
 });
 
