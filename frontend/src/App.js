@@ -1,4 +1,5 @@
 import React from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import Header from "./components/Header";
@@ -21,45 +22,50 @@ import OrderListScreen from "./screens/OrderListScreen";
 
 const App = () => {
   return (
-    <Router>
-      <Header />
-      <main className="py-3">
-        <Container>
-          <Route path="/order/:id" component={OrderScreen} />
-          <Route path="/shipping" component={ShippingScreen} />
-          <Route path="/payment" component={PaymentScreen} />
-          <Route path="/placeorder" component={PlaceOrderScreen} />
-          <Route path="/login" component={LoginScreen} />
-          <Route path="/register" component={RegisterScreen} />
-          <Route path="/profile" component={ProfileScreen} />
-          <Route path="/product/:id" component={ProductScreen} />
-          <Route path="/cart/:id?" component={CartScreen} />
-          <Route path="/admin/userlist" component={UserListScreen} />
-          <Route path="/admin/user/:id/edit" component={UserEditScreen} />
-          <Route
-            path="/admin/productlist"
-            exact
-            component={ProductListScreen}
-          />
-          <Route
-            path="/admin/productlist/:pageNumber"
-            exact
-            component={ProductListScreen}
-          />
-          <Route path="/admin/product/:id/edit" component={ProductEditScreen} />
-          <Route path="/admin/orderlist" component={OrderListScreen} />
-          <Route path="/search/:keyword" exact component={HomeScreen} />
-          <Route path="/page/:pageNumber" exact component={HomeScreen} />
-          <Route
-            path="/search/:keyword/page/:pageNumber"
-            exact
-            component={HomeScreen}
-          />
-          <Route path="/" exact component={HomeScreen} />
-        </Container>
-      </main>
-      <Footer />
-    </Router>
+    <HelmetProvider>
+      <Router>
+        <Header />
+        <main className="py-3">
+          <Container>
+            <Route path="/order/:id" component={OrderScreen} />
+            <Route path="/shipping" component={ShippingScreen} />
+            <Route path="/payment" component={PaymentScreen} />
+            <Route path="/placeorder" component={PlaceOrderScreen} />
+            <Route path="/login" component={LoginScreen} />
+            <Route path="/register" component={RegisterScreen} />
+            <Route path="/profile" component={ProfileScreen} />
+            <Route path="/product/:id" component={ProductScreen} />
+            <Route path="/cart/:id?" component={CartScreen} />
+            <Route path="/admin/userlist" component={UserListScreen} />
+            <Route path="/admin/user/:id/edit" component={UserEditScreen} />
+            <Route
+              path="/admin/productlist"
+              exact
+              component={ProductListScreen}
+            />
+            <Route
+              path="/admin/productlist/:pageNumber"
+              exact
+              component={ProductListScreen}
+            />
+            <Route
+              path="/admin/product/:id/edit"
+              component={ProductEditScreen}
+            />
+            <Route path="/admin/orderlist" component={OrderListScreen} />
+            <Route path="/search/:keyword" exact component={HomeScreen} />
+            <Route path="/page/:pageNumber" exact component={HomeScreen} />
+            <Route
+              path="/search/:keyword/page/:pageNumber"
+              exact
+              component={HomeScreen}
+            />
+            <Route path="/" exact component={HomeScreen} />
+          </Container>
+        </main>
+        <Footer />
+      </Router>
+    </HelmetProvider>
   );
 };
 
