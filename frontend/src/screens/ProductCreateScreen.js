@@ -6,12 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
-import { listProductDetails, updateProduct } from "../actions/productActions";
-import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
+import { createProduct } from "../actions/productActions";
+import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
-const ProductEditScreen = ({ match, history }) => {
-  const productId = match.params.id;
-
+const ProductCreateScreen = ({ history }) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [image, setImage] = useState("");
@@ -24,34 +22,15 @@ const ProductEditScreen = ({ match, history }) => {
 
   const dispatch = useDispatch();
 
-  const productDetails = useSelector((state) => state.productDetails);
-  const { loading, error, product } = productDetails;
-
-  const productUpdate = useSelector((state) => state.productUpdate);
-  const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    success: successUpdate,
-  } = productUpdate;
+  const productCreate = useSelector((state) => state.productCreate);
+  const { loading, error, success } = productCreate;
 
   useEffect(() => {
-    if (successUpdate) {
-      dispatch({ type: PRODUCT_UPDATE_RESET });
-      history.push("/admin/productlist");
-    } else {
-      if (!product.name || product._id !== productId) {
-        dispatch(listProductDetails(productId));
-      } else {
-        setName(product.name);
-        setPrice(product.price);
-        setImage(product.image);
-        setBrand(product.brand);
-        setCategory(product.category);
-        setDescription(product.description);
-        setCountInStock(product.countInStock);
-      }
+    if (success) {
+      history.push("/admin/productList");
+      dispatch({ type: PRODUCT_CREATE_RESET });
     }
-  }, [dispatch, history, productId, product, successUpdate]);
+  }, [dispatch, success, history]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
@@ -85,8 +64,7 @@ const ProductEditScreen = ({ match, history }) => {
       e.stopPropagation();
     } else {
       dispatch(
-        updateProduct({
-          _id: productId,
+        createProduct({
           name,
           price,
           image,
@@ -102,17 +80,15 @@ const ProductEditScreen = ({ match, history }) => {
 
   return (
     <>
-      <Link to="/admin/productList" className="btn btn-light my-3">
+      <Link to={"/admin/productList"} className="btn btn-light my-3">
         Go Back
       </Link>
       <FormContainer>
-        <h1>Edit Product</h1>
-        {loadingUpdate && <Loader />}
-        {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
+        <h1>Create Product</h1>
         {loading ? (
           <Loader />
         ) : error ? (
-          <Message varaint="danger">{error}</Message>
+          <Message variant="danger">{error}</Message>
         ) : (
           <Form noValidate validated={validated} onSubmit={submitHandler}>
             <Form.Group className="mb-3" controlId="name">
@@ -189,7 +165,7 @@ const ProductEditScreen = ({ match, history }) => {
                 required
               ></Form.Control>
               <Form.Control.Feedback type="invalid">
-                Please choose a Category
+                Please choose a category
               </Form.Control.Feedback>
             </Form.Group>
 
@@ -222,7 +198,7 @@ const ProductEditScreen = ({ match, history }) => {
             </Form.Group>
 
             <Button type="submit" variant="primary">
-              Update
+              Create
             </Button>
           </Form>
         )}
@@ -231,4 +207,4 @@ const ProductEditScreen = ({ match, history }) => {
   );
 };
 
-export default ProductEditScreen;
+export default ProductCreateScreen;

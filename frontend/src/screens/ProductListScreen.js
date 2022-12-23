@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +7,6 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import Paginate from "../components/Paginate";
 import {
-  createProduct,
   deleteProduct,
   listProducts,
 } from "../actions/productActions";
@@ -66,9 +66,9 @@ const ProductListScreen = ({ match, history }) => {
     }
   };
 
-  const createProductHandler = () => {
-    dispatch(createProduct());
-  };
+  // const createProductHandler = () => {
+  //   dispatch(createProduct());
+  // };
 
   return (
     <>
@@ -77,9 +77,9 @@ const ProductListScreen = ({ match, history }) => {
           <h1>Products</h1>
         </Col>
         <Col className="text-end">
-          <Button className="my-3" onClick={createProductHandler}>
+          <Link to={"/admin/product/createNewProduct"} className="btn btn-primary my-3">
             <i className="fas fa-plus"></i> Create Product
-          </Button>
+          </Link>
         </Col>
       </Row>
       {loadingDelete && <Loader />}
